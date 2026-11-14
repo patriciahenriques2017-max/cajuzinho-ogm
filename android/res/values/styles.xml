@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ceu">#e6f3fa</color>
+    <color name="buriti">#1f7a4d</color>
+    <style name="Tema" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/ceu</item>
+        <item name="android:statusBarColor">@color/buriti</item>
+        <item name="android:navigationBarColor">@color/ceu</item>
+    </style>
+</resources>
