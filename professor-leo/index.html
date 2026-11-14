@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Professor Léo do Samuel</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f7a4d">
+<link rel="icon" href="icons/icone-192.png">
+<link rel="apple-touch-icon" href="icons/icone-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* layout: app de uma coluna para celular. Início = trilha das 6 partes; Treino = cartão do trecho + 5 níveis + ações; Ensaio = roteiro com cronômetro */
+  --ceu:#e6f3fa; --papel:#ffffff; --tinta:#17324a; --buriti:#1f7a4d; --buriti-claro:#dff2e7;
+  --ipe:#f6b90c; --ipe-claro:#fff4cf; --terra:#c2452d; --suave:#526b7e; --linha:#c9dce8;
+  --display:"Baloo 2","Trebuchet MS",Arial,sans-serif; --corpo:Arial,Helvetica,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ceu);color:var(--tinta);font-family:var(--corpo);font-size:18px;line-height:1.5}
+#app{max-width:640px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.15;text-wrap:balance}
+h1{font-size:30px;font-weight:800}
+h2{font-size:26px;font-weight:800}
+h3{font-size:20px;font-weight:600;color:var(--buriti)}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--terra);outline-offset:2px}
+
+.prof{display:flex;flex-direction:column;gap:10px}
+.prof svg{display:block;width:100%;max-width:400px;height:auto;align-self:center;border-radius:16px;border:2px solid var(--tinta)}
+.palco{width:100%;max-width:400px;aspect-ratio:320/220;align-self:center;border-radius:16px;border:2px solid var(--tinta);overflow:hidden;background:#2f6b52}
+.palco canvas,.palco svg{display:block;width:100%;height:100%;max-width:none;border:0;border-radius:0}
+.palp{transform-box:fill-box;transform-origin:center;transform:scaleY(0);animation:pisca 4.6s infinite}
+@keyframes pisca{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+.boca-a{display:none;transform-box:fill-box;transform-origin:center}
+body.falando .boca-a{display:block;animation:fala .17s infinite alternate ease-in-out}
+body.falando .boca-f{display:none}
+@keyframes fala{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+.cabeca{transform-origin:160px 142px;animation:respira 3.4s infinite ease-in-out}
+@keyframes respira{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(-1.5deg)}}
+.ante{transition:transform .4s}
+.ad{transform-origin:223px 216px;transform:rotate(172deg)}
+.ae{transform-origin:97px 216px;transform:rotate(-172deg)}
+.oi .ae{animation:oi 3.2s 1 ease-in-out}
+@keyframes oi{0%,100%{transform:rotate(-172deg)}15%,85%{transform:rotate(-22deg)}30%,58%{transform:rotate(-48deg)}44%,72%{transform:rotate(-14deg)}}
+.viva .ad{animation:vivaD .45s infinite alternate ease-in-out}
+.viva .ae{animation:vivaE .45s -.22s infinite alternate ease-in-out}
+@keyframes vivaD{from{transform:rotate(6deg)}to{transform:rotate(34deg)}}
+@keyframes vivaE{from{transform:rotate(-6deg)}to{transform:rotate(-34deg)}}
+body.falando .cabeca{animation:aceno 1.3s infinite ease-in-out}
+@keyframes aceno{0%,100%{transform:rotate(-3.5deg)}30%{transform:rotate(3deg) translateY(-3px)}55%{transform:rotate(-1deg) translateY(1.5px)}80%{transform:rotate(4deg) translateY(-1.5px)}}
+body.falando .sobr{animation:sobr 1.7s infinite ease-in-out}
+@keyframes sobr{0%,60%,100%{transform:translateY(0)}75%,88%{transform:translateY(-4px)}}
+body.falando .ad{animation:gestoD 2s infinite ease-in-out}
+body.falando .ae{animation:gestoE 3s infinite ease-in-out}
+@keyframes gestoD{0%,100%{transform:rotate(22deg)}25%{transform:rotate(46deg)}50%{transform:rotate(14deg)}75%{transform:rotate(38deg)}}
+@keyframes gestoE{0%,28%,100%{transform:rotate(-172deg)}44%{transform:rotate(-30deg)}60%{transform:rotate(-52deg)}80%{transform:rotate(-24deg)}}
+@media (prefers-reduced-motion:reduce){.palp,.cabeca,.ante,.sobr,body.falando .boca-a,body.falando .cabeca,body.falando .ante,body.falando .sobr{animation:none}}
+.voz{align-self:flex-start;padding:7px 12px;border:2px solid var(--tinta);border-radius:99px;background:var(--papel);font-size:15px;font-weight:bold}
+.voz.off{background:var(--linha)}
+.balao{text-align:left;font-size:18px;line-height:1.45;background:var(--papel);border:2px solid var(--tinta);border-radius:4px 18px 18px 18px;padding:12px 14px}
+.balao b{font-family:var(--display);font-size:20px;display:block}
+.balao small{display:block;margin-top:6px;font-size:14px;color:var(--suave)}
+
+.barra{height:14px;background:var(--papel);border:2px solid var(--tinta);border-radius:99px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--ipe)}
+.conta{font-size:16px;color:var(--suave)}
+
+.btn{display:block;width:100%;padding:14px 16px;border-radius:14px;font-family:var(--display);font-size:21px;font-weight:800;text-align:center;border:2px solid var(--tinta);box-shadow:0 4px 0 var(--tinta)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tinta)}
+.btn.verde{background:var(--buriti);color:#fff}
+.btn.amarelo{background:var(--ipe)}
+.btn.branco{background:var(--papel)}
+.linha{display:flex;gap:10px;flex-wrap:wrap}
+.linha .btn{flex:1 1 140px;font-size:18px;padding:11px 10px}
+
+.parte{display:flex;flex-direction:column;gap:8px}
+.parte h3 span{color:var(--terra)}
+.trecho{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--papel);border:2px solid var(--linha);border-radius:12px;padding:11px 12px}
+.trecho .nome{flex:1}
+.trecho.feito{border-color:var(--buriti);background:var(--buriti-claro)}
+.pips{display:flex;gap:3px}
+.pips i{width:9px;height:9px;border-radius:50%;background:var(--linha)}
+.pips i.on{background:var(--buriti)}
+.estrela{width:22px;font-size:20px;color:var(--ipe);text-shadow:0 0 1px var(--tinta)}
+
+.topo{display:flex;align-items:center;gap:10px}
+.topo .volta{padding:8px 12px;border:2px solid var(--tinta);border-radius:10px;background:var(--papel);font-weight:bold}
+.topo .onde{flex:1;font-size:15px;color:var(--suave);text-align:right}
+.niveis{display:flex;gap:6px}
+.niveis button{flex:1;padding:7px 2px;border-radius:10px;border:2px solid var(--linha);background:var(--papel);font-size:13px;line-height:1.2}
+.niveis button b{display:block;font-family:var(--display);font-size:19px}
+.niveis button.passou{background:var(--buriti-claro);border-color:var(--buriti)}
+.niveis button.atual{background:var(--ipe);border-color:var(--tinta)}
+.cartao{background:var(--papel);border:2px solid var(--tinta);border-radius:16px;padding:16px;font-size:21px;line-height:1.75}
+.lac{display:inline-block;border-bottom:3px solid var(--terra);background:var(--ipe-claro);border-radius:6px 6px 0 0;padding:0 4px;line-height:1.35;text-align:left;color:var(--terra);font-weight:bold}
+.lac.ok{background:var(--buriti-claro);border-color:var(--buriti);color:var(--buriti);min-width:0 !important}
+.dica{background:var(--ipe-claro);border-left:6px solid var(--ipe);border-radius:8px;padding:10px 12px;font-size:17px}
+.festa{text-align:center;font-family:var(--display);font-size:24px;font-weight:800;color:var(--buriti)}
+
+.relogio{font-family:var(--display);font-size:54px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;line-height:1}
+details{background:var(--papel);border:2px solid var(--linha);border-radius:12px;padding:10px 12px}
+summary{cursor:pointer;font-weight:bold}
+details p{margin-top:8px;font-size:19px;line-height:1.6}
+@media (max-width:380px){.cartao{font-size:19px}.niveis button{font-size:11px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="lib/three.min.js"></script>
+<script src="lib/GLTFLoader.js"></script>
+<script src="modelo.js" async></script>
+<script>
+const P=[
+{t:'Abertura',c:[
+ {t:'Saudação',x:'Bom dia à banca examinadora e boa tarde a todos. Meu nome é Samuel, sou aluno do 5º ano matutino, turma da professora Giullyana.'},
+ {t:'Tema',x:'Hoje vou apresentar a minha primeira CFS, na disciplina de Geografia, com o tema: “Região Centro-Oeste”.'},
+ {t:'Palavras para definir',x:'As palavras que escolhi para definir são: Região e Fronteira. Região: é uma porção de espaço geográfico que apresenta características comuns. Fronteira: são limites que separam o território de um país, estados ou outra unidade política.',d:'Região junta o que é parecido. Fronteira separa.'},
+ {t:'Referência bíblica',x:'A Referência Bíblica que escolhi foi Salmos 33:12, que diz: “Bem-aventurada é a nação cujo Deus é o Senhor, e o povo que ele escolheu para a sua herança”.'}
+]},
+{t:'O Brasil e o Centro-Oeste',c:[
+ {t:'O Brasil',x:'Para começar, farei um breve resumo das características territoriais do Brasil. O Brasil é o 5º maior país do mundo, com uma extensão de 8.515.767,049 km², situada na América do Sul.',d:'O número grande: 8 milhões, 515 mil, 767 quilômetros quadrados.'},
+ {t:'Estados e regiões',x:'O território é dividido em 26 estados e o Distrito Federal, sede da capital, Brasília, agrupados nas regiões Norte, Nordeste, Centro-Oeste, Sudeste e Sul.',d:'26 estados, 1 Distrito Federal, 5 regiões.'},
+ {t:'Tamanho da região',x:'A Região Centro-Oeste é a segunda maior em extensão territorial do Brasil, porém é a menos populosa. A extensão é 1.606.371 km² (cerca de 18,8% de todo o território brasileiro).',d:'Segunda maior no tamanho, última em população.'},
+ {t:'Fronteiras e estados',x:'É a única região do país que faz fronteira com todas as outras regiões brasileiras (exceto a Região Sul). Formada por três estados: Goiás (GO), Mato Grosso (MT) e Mato Grosso do Sul (MS), além do Distrito Federal (DF).',d:'Três estados e o DF: Goiás, Mato Grosso, Mato Grosso do Sul.'},
+ {t:'História',x:'A região era habitada por diversas etnias indígenas. A ocupação europeia começou com as expedições paulistas (Bandeiras) nos Séculos XVII e XVIII, que buscavam índios para escravizar e ouro.',d:'XVII é 17 e XVIII é 18.'},
+ {t:'Amazônia',x:'Se destaca na região Centro-Oeste a Amazônia, a maior floresta tropical do mundo, abrigando milhares de espécies de plantas e animais.'}
+]},
+{t:'Aspectos físicos',c:[
+ {t:'Clima tropical típico',x:'O clima predominante da região é o Tropical Típico, caracterizado por temperaturas elevadas ao longo de todo o ano, com um verão quente e chuvoso e um inverno seco e ameno.',d:'Verão quente e chuvoso. Inverno seco e ameno.'},
+ {t:'Outros climas',x:'No norte do Mato Grosso predomina o clima equatorial, quente e chuvoso o ano todo. Já o sul do Mato Grosso do Sul e trechos do Distrito Federal apresentam o clima tropical de altitude, com temperaturas mais amenas.',d:'Norte: equatorial. Sul e DF: tropical de altitude.'},
+ {t:'Vegetação',x:'A vegetação do Centro-Oeste é dominada pelo Cerrado e pelo Pantanal, com trechos de Floresta Amazônica ao norte.'},
+ {t:'Hidrografia',x:'A hidrografia é marcada pela presença de importantes bacias hidrográficas, como a Amazônica, do Paraná e do Araguaia-Tocantins, destacando-se como um grande divisor de águas nacional. Além do Pantanal, a maior planície alagada do mundo.',d:'Três bacias: Amazônica, Paraná e Araguaia-Tocantins.'},
+ {t:'Relevo',x:'O relevo da Região Centro-Oeste é predominantemente formado por extensos planaltos e chapadas no interior, onde se localizam as principais áreas agrícolas, delimitados por uma vasta área rebaixada que abriga a planície do Pantanal.',d:'No alto: planaltos e chapadas. Embaixo: a planície do Pantanal.'}
+]},
+{t:'Aspectos econômicos',c:[
+ {t:'Economia',x:'A economia do Centro-Oeste impulsionou seu PIB e expandiu sua fronteira agrícola a partir dos anos 1950, com a criação de Brasília e incentivos à ocupação rural.'},
+ {t:'Agricultura',x:'A agricultura evoluiu da subsistência familiar para um modelo comercial altamente produtivo, tecnológico e voltado para grandes mercados e exportação. Conhecida como “celeiro” do país, a região destaca-se no cultivo de grãos como soja e milho, além de algodão, cana-de-açúcar e diversos outros produtos agrícolas.',d:'Quatro plantações: soja, milho, algodão e cana-de-açúcar.'},
+ {t:'Pecuária',x:'A pecuária é a principal atividade econômica do Centro-Oeste, impulsionada pelo maior rebanho bovino do país, cerca de 70 milhões de cabeças. A região também se destaca na criação de suínos, ovinos, equinos e bubalinos.',d:'Suínos são porcos, ovinos são ovelhas, equinos são cavalos, bubalinos são búfalos.'},
+ {t:'Extrativismo',x:'No extrativismo vegetal, destaque para madeira, erva-mate e látex. No extrativismo mineral, ouro, diamantes e grandes reservas de manganês no Maciço de Urucum.',d:'Vegetal: madeira, erva-mate, látex. Mineral: ouro, diamantes, manganês.'},
+ {t:'Indústria',x:'O setor industrial no Centro-Oeste vem acelerando seu desenvolvimento, impulsionado pela mecanização do campo e incentivos governamentais. Esse parque industrial destaca-se pelo processamento agroalimentar (soja, frigoríficos, laticínios) e bioenergia, além de segmentos relevantes como a indústria química, automobilística, de bebidas e celulose.'},
+ {t:'Transporte',x:'O transporte é predominantemente rodoviário. Para reduzir custos e otimizar o transporte de grãos e minérios, ganham força as ferrovias e as hidrovias estratégicas, como a do Paraná e Paraguai.',d:'Rodovia é estrada, ferrovia é trem, hidrovia é rio.'},
+ {t:'Turismo',x:'O turismo na região reúne destinos renomados de ecoturismo e lazer, como as paisagens do Cerrado nas Chapadas dos Veadeiros e dos Guimarães, a rica fauna do Pantanal e as águas termais de Caldas Novas. Além do turismo cultural e histórico, com o casario colonial e tradições de cidades como Pirenópolis e Goiás, bem como a arquitetura modernista de Brasília.',d:'Natureza: Chapadas, Pantanal, Caldas Novas. Cultura: Pirenópolis, Goiás, Brasília.'}
+]},
+{t:'Cultura da região',c:[
+ {t:'Cultura',x:'A cultura da região Centro-Oeste é uma rica tapeçaria moldada pela fusão das tradições indígenas, a herança dos bandeirantes, as manifestações folclóricas do Cerrado e o dinamismo da capital federal.'},
+ {t:'Artesanato',x:'O artesanato da região Centro-Oeste reflete a biodiversidade do Cerrado e do Pantanal, expressando-se no uso de matérias-primas naturais como madeira, fibras vegetais, argila e capim-dourado.',d:'Quatro materiais: madeira, fibras, argila e capim-dourado.'},
+ {t:'Culinária',x:'Culinária: pratos à base de peixes fluviais, carnes e mandioca. O grande destaque da região é o arroz com pequi, prato emblemático que traz o fruto típico do Cerrado como o símbolo mais marcante da identidade gastronômica local.'},
+ {t:'Dança',x:'As danças combinam influências indígenas, africanas, europeias e dos países vizinhos, sendo apresentadas em festas tradicionais ao som marcante da viola e em ritmos como o siriri, cururu, chupim, xote e catira.',d:'Cinco ritmos: siriri, cururu, chupim, xote e catira.'},
+ {t:'Festas típicas',x:'As festas típicas expressam a identidade cultural e a religiosidade da região, com celebrações tradicionais como a Congada, a Procissão do Fogaréu, o Festival de Cururu e Siriri, a Festa do Boi-à-Serra e a Festa de Nossa Senhora do Perpétuo Socorro.',d:'São cinco festas. Conte nos dedos enquanto fala.'},
+ {t:'Variações linguísticas',x:'As variações linguísticas refletem a herança dos bandeirantes paulistas combinada a fortes influências migratórias dos mineiros, gaúchos e a fronteira paraguaia. Por exemplo, Arreda: tirar, remover; e Capaz: expressão de surpresa ou dúvida.'}
+]},
+{t:'Encerramento',c:[
+ {t:'Princípio',x:'O princípio que relacionei com o assunto foi a Individualidade: Deus criou cada região com uma vocação e uma beleza específicas. A região Centro-Oeste abriga paisagens e patrimônios de valor inigualável, oferecendo cenários perfeitos para o ecoturismo e o turismo cultural.'},
+ {t:'Posso relacionar',x:'Posso relacionar o assunto pesquisado sobre a Região Centro-Oeste na disciplina de Geografia, em primeiro lugar, com o meu pai, que é professor de Geografia e sempre compartilha seu conhecimento geográfico comigo. Também relaciono o clima da região pesquisada com o da Região Nordeste, pois ambas apresentam temperaturas médias elevadas na maior parte do ano.',d:'Duas relações: meu pai e o clima do Nordeste.'},
+ {t:'Agradecimento',x:'Primeiro sou grato a Deus, que me capacitou para realizar essa pesquisa, à minha família, que esteve presente me apoiando, aos colegas de classe, professores e à banca.',d:'A ordem: Deus, família, colegas, professores, banca.'},
+ {t:'Conclusão',x:'Concluo este trabalho refletindo como foi importante conhecer os aspectos da Região Centro-Oeste, sua riqueza cultural, sua força econômica e a singularidade de suas paisagens, compreendendo ainda mais a diversidade e a importância dessa região para o nosso país. Agradeço a atenção de todos!'}
+]}
+];
+const F=[];P.forEach((p,i)=>p.c.forEach((c,j)=>{c.id=i+'-'+j;c.p=i;F.push(c)}));
+const NIV=[['1','Ler'],['2','Faltam algumas'],['3','Faltam muitas'],['4','Só iniciais'],['5','De cor']];
+const FALA=['',
+ 'Leia em voz alta duas vezes, bem devagar.',
+ 'Algumas palavras sumiram. Fale o trecho em voz alta e toque no espaço para conferir.',
+ 'Agora sumiram mais palavras. Fale tudo e só toque se travar.',
+ 'Ficou só a primeira letra de cada palavra. Fale o trecho inteiro.',
+ 'Hora de falar de cor, olhando para a plateia. Depois confira.'];
+const KEY='tuiuiu-samuel';
+let lv={};try{lv=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+const salva=()=>{try{localStorage.setItem(KEY,JSON.stringify(lv))}catch(e){}};
+const temVoz=typeof Audio!=='undefined';
+let S={v:'home',i:0,n:1,ver:false,festa:false},seg=0,tick=null;
+const app=document.getElementById('app');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const AVE='<svg viewBox="0 0 320 220" role="img" aria-label="Professor Léo na frente do quadro"><defs><linearGradient id="qd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34795c"/><stop offset="1" stop-color="#255843"/></linearGradient><radialGradient id="pele" cx=".42" cy=".35" r=".8"><stop offset="0" stop-color="#eeb488"/><stop offset="1" stop-color="#d4905f"/></radialGradient><linearGradient id="cab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43281a"/><stop offset="1" stop-color="#22130b"/></linearGradient></defs><rect width="320" height="220" fill="#f3e3c8"/><rect x="8" y="8" width="304" height="176" rx="8" fill="url(#qd)" stroke="#a9713f" stroke-width="7"/><rect x="4" y="184" width="312" height="9" rx="3" fill="#8a5a30"/><rect x="40" y="180" width="18" height="5" rx="2" fill="#fff"/><rect x="66" y="180" width="12" height="5" rx="2" fill="#f6b90c"/><g fill="none" stroke="#fff" stroke-linecap="round" opacity=".8"><text x="20" y="32" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#fff" stroke="none">Região</text><text x="20" y="48" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#fff" stroke="none">Centro-Oeste</text><path d="M20 54h82" stroke-width="1.5"/><text x="20" y="70" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#fff" stroke="none">GO · MT</text><text x="20" y="84" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#fff" stroke="none">MS · DF</text><circle cx="282" cy="46" r="17" stroke-width="1.6"/><path d="M282 24l5 22-5 22-5-22zM260 46l22-5 22 5-22 5z" stroke-width="1.4"/><text x="278" y="20" font-family="Arial,sans-serif" font-size="9" fill="#fff" stroke="none">N</text></g><path d="M110 178L97 216M210 178L223 216" stroke="#24476b" stroke-width="25" stroke-linecap="round"/><path d="M104 224v-36c0-22 18-33 42-38h28c24 5 42 16 42 38v36z" fill="#24476b"/><path d="M113 222l2-30M207 222l-2-30" stroke="#1a3552" stroke-width="2.500" stroke-linecap="round"/><path d="M144 150l16 40 16-40-8-6h-16z" fill="#fff"/><path d="M155.500 158h9l-1.500 7 4.500 34-7.500 9-7.500-9 4.500-34z" fill="#f6b90c"/><path d="M155.500 158h9l-1.500 7h-6z" fill="#d99a00"/><path d="M146 148l14 13-7 9-12-16zM174 148l-14 13 7 9 12-16z" fill="#fff" stroke="#d5dde6" stroke-width="1"/><path d="M141 152l-11 9 20 42 9-22zM179 152l11 9-20 42-9-22z" fill="#2f5a86"/><path d="M141 152l-11 9 20 42M179 152l11 9-20 42" fill="none" stroke="#1a3552" stroke-width="1.600" stroke-linejoin="round"/><path d="M147 120h26v29c-7 8-19 8-26 0z" fill="#c8845a"/><path d="M147 134c8 8 18 8 26 0v-8h-26z" fill="#9c5f3c" opacity=".55"/><g class="cabeca"><path d="M114 92C106 52 132 28 162 28c32 0 54 24 44 64l-6-20H122z" fill="url(#cab)"/><ellipse cx="116.500" cy="96" rx="6.500" ry="9.500" fill="#d4905f"/><ellipse cx="203.500" cy="96" rx="6.500" ry="9.500" fill="#d4905f"/><path d="M114 92q-2 5 2 9M206 92q2 5-2 9" stroke="#b06f48" stroke-width="1.500" fill="none" stroke-linecap="round"/><path d="M119 84c0-36 82-36 82 0v15c0 22-16 41-41 42-25-1-41-20-41-42z" fill="url(#pele)"/><path d="M120 102c2 24 18 38 40 39 22-1 38-15 40-39-4 18-18 28-40 29-22-1-36-11-40-29z" fill="#4a2c1a" opacity=".13"/><path d="M117 86c-3-26 14-46 44-46 28 0 46 18 42 46-3-12-9-20-18-24-14 7-36 7-52-3-8 5-13 14-16 27z" fill="url(#cab)"/><path d="M124 56C132 30 172 22 196 42c7 6 10 15 9 25-6-13-18-20-36-20-18 0-32 3-45 9z" fill="#4a2d1c"/><path d="M134 48q20-13 44-8M150 42q16-7 34 0" stroke="#8a5f40" stroke-width="2.200" fill="none" stroke-linecap="round" opacity=".75"/><path d="M120 80v9M200 80v9" stroke="#2f1c12" stroke-width="3" stroke-linecap="round"/><g class="sobr"><path d="M128 81q12-9 26-3l-1 4.500q-12-4-24 2.500zM192 81q-12-9-26-3l1 4.500q12-4 24 2.500z" fill="#2f1c12"/></g><clipPath id="o1"><path d="M130.5 94Q141 84.500 151.5 94Q141 102 130.5 94z"/></clipPath><path d="M130.5 94Q141 84.500 151.5 94Q141 102 130.5 94z" fill="#fff"/><g clip-path="url(#o1)"><circle cx="141" cy="93.500" r="5.600" fill="#7a5230"/><circle cx="141" cy="93.500" r="4.300" fill="#5a3a20"/><circle cx="141" cy="93.500" r="2.300" fill="#140b06"/><path d="M129 84h24v5h-24z" fill="#000" opacity=".12"/></g><circle cx="142.8" cy="91.600" r="1.500" fill="#fff"/><ellipse class="palp" cx="141" cy="93.500" rx="11.500" ry="6.500" fill="#dc9c6e"/><path d="M130 94.500Q141 83.800 152 94.500" stroke="#2f1c12" stroke-width="2.300" fill="none" stroke-linecap="round"/><clipPath id="o2"><path d="M168.5 94Q179 84.500 189.5 94Q179 102 168.5 94z"/></clipPath><path d="M168.5 94Q179 84.500 189.5 94Q179 102 168.5 94z" fill="#fff"/><g clip-path="url(#o2)"><circle cx="179" cy="93.500" r="5.600" fill="#7a5230"/><circle cx="179" cy="93.500" r="4.300" fill="#5a3a20"/><circle cx="179" cy="93.500" r="2.300" fill="#140b06"/><path d="M167 84h24v5h-24z" fill="#000" opacity=".12"/></g><circle cx="180.8" cy="91.600" r="1.500" fill="#fff"/><ellipse class="palp" cx="179" cy="93.500" rx="11.500" ry="6.500" fill="#dc9c6e"/><path d="M168 94.500Q179 83.800 190 94.500" stroke="#2f1c12" stroke-width="2.300" fill="none" stroke-linecap="round"/><rect x="125.500" y="82" width="31" height="23" rx="8.500" fill="#fff" fill-opacity=".07" stroke="#22303f" stroke-width="2.200"/><rect x="163.500" y="82" width="31" height="23" rx="8.500" fill="#fff" fill-opacity=".07" stroke="#22303f" stroke-width="2.200"/><path d="M156.500 92q3.500-3 7 0M125.500 90l-7-2M194.500 90l7-2" stroke="#22303f" stroke-width="2.200" fill="none" stroke-linecap="round"/><path d="M160.500 99q-2 8-5 11.500 4.500 3 9 .5" stroke="#b8774e" stroke-width="2.200" fill="none" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="129" cy="113" rx="7" ry="4.500" fill="#e8736a" opacity=".18"/><ellipse cx="191" cy="113" rx="7" ry="4.500" fill="#e8736a" opacity=".18"/><g class="boca-f"><path d="M146 120.500q14 11 28 0" stroke="#8f3f36" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M144 119q1.500 2 3 2M176 119q-1.500 2-3 2" stroke="#b8774e" stroke-width="1.600" fill="none" stroke-linecap="round"/></g><g class="boca-a"><path d="M146 119q14-4 28 0-2 17-14 17t-14-17z" fill="#6b1f24"/><path d="M149 119.300q11-3 22 0v3.800q-11 2.300-22 0z" fill="#fff"/><ellipse cx="160" cy="131" rx="6" ry="3.200" fill="#e8707c"/></g></g><g class="ante ae"><path d="M97 216V182" stroke="#24476b" stroke-width="22" stroke-linecap="round"/><path d="M97 181v-5" stroke="#fff" stroke-width="20" stroke-linecap="round"/><path d="M88.5 157.0L85.1 144.2" stroke="#e2a273" stroke-width="6.5" stroke-linecap="round"/><path d="M94.2 157.0L93.1 141.4" stroke="#e2a273" stroke-width="6.5" stroke-linecap="round"/><path d="M99.8 157.0L100.9 141.4" stroke="#e2a273" stroke-width="6.5" stroke-linecap="round"/><path d="M105.5 157.0L108.9 144.2" stroke="#e2a273" stroke-width="6.5" stroke-linecap="round"/><path d="M105.0 165.0L114.0 158.0" stroke="#e2a273" stroke-width="6.5" stroke-linecap="round"/><circle cx="97" cy="163" r="12.5" fill="#e2a273"/><path d="M91.0 166.0q6 5 12 1" stroke="#c8845a" stroke-width="2" fill="none" stroke-linecap="round"/></g><g class="ante ad"><path d="M223 216V182" stroke="#24476b" stroke-width="22" stroke-linecap="round"/><path d="M223 181v-5" stroke="#fff" stroke-width="20" stroke-linecap="round"/><path d="M223 170V112" stroke="#c99a5b" stroke-width="4.5" stroke-linecap="round"/><circle cx="223" cy="112" r="3.2" fill="#fff"/><circle cx="223" cy="163" r="12.5" fill="#e2a273"/><path d="M215 159q4-5 8-2M221 155q4-4 8 0M217 168q6 4 12 0" stroke="#c8845a" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>';
+let vz=lv._v||1,vozOn=!lv._mudo,fila=[],atual=null;
+const boca=on=>{FAL=on;document.body.classList.toggle('falando',on)};
+const som=temVoz?new Audio():null;
+function prox(){const n=fila.shift();if(!n){atual=null;boca(false);return}atual=n;som.src='v'+vz+'/'+n+'.mp3';const p=som.play();if(p&&p.catch)p.catch(()=>{fila=[];atual=null;boca(false)})}
+if(som){som.preload='auto';som.addEventListener('ended',prox);som.addEventListener('playing',()=>boca(true));som.addEventListener('pause',()=>boca(false));som.addEventListener('error',()=>{fila=[];atual=null;boca(false)})}
+function diz(l,forca){if(!som||(!vozOn&&!forca)||!l||!l.length)return;calar();fila=l.slice();prox()}
+function calar(){fila=[];atual=null;if(som){try{som.pause()}catch(e){}}boca(false)}
+
+let FAL=false,R3=null;
+function ini3D(){
+  if(!window.THREE)return null;
+  const T=THREE;let r;try{r=new T.WebGLRenderer({antialias:true})}catch(e){return null}
+  r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));r.outputEncoding=T.sRGBEncoding;
+  const cv=r.domElement,sc=new T.Scene(),cam=new T.PerspectiveCamera(30,320/220,.1,60);
+  cam.position.set(0,-.78,9);cam.lookAt(0,-.78,0);
+  sc.add(new T.HemisphereLight(0xffffff,0x9a8a78,1.0));
+  const dl=new T.DirectionalLight(0xffffff,.9);dl.position.set(3,4,7);sc.add(dl);
+  const fl=new T.DirectionalLight(0xbfd8ff,.25);fl.position.set(-5,1,3);sc.add(fl);
+  const M=(c,ro)=>new T.MeshStandardMaterial({color:new T.Color(c).convertSRGBToLinear(),roughness:ro||.5,metalness:0});
+  const skin=M(0xe6a678),skin2=M(0xcd8a5d),hair=M(0x3b2416,.85),navy=M(0x1f4270,.7),lap=M(0x35669a,.8),white=M(0xffffff,.7),
+    yel=M(0xf6b90c,.6),dark=M(0x1c2836,.4),brown=M(0x6a4326,.4),black=M(0x120a06,.3),red=M(0x7a2328,.6),lip=M(0x9a463c,.6),wood=M(0xc99a5b,.7);
+  const S=(rad,m,x,y,z,sx,sy,sz)=>{const o=new T.Mesh(new T.SphereGeometry(rad,56,40),m);o.position.set(x,y,z);o.scale.set(sx||1,sy||1,sz||1);return o};
+  const C=(a,b,hh,m,x,y,z)=>{const o=new T.Mesh(new T.CylinderGeometry(a,b,hh,40),m);o.position.set(x||0,y||0,z||0);return o};
+  const B=(w,hh,d,m,x,y,z)=>{const o=new T.Mesh(new T.BoxGeometry(w,hh,d),m);o.position.set(x,y,z);return o};
+  // quadro
+  const q=document.createElement('canvas');q.width=1024;q.height=704;const g=q.getContext('2d');
+  const gr=g.createLinearGradient(0,0,1024,704);gr.addColorStop(0,'#35795c');gr.addColorStop(1,'#245642');g.fillStyle=gr;g.fillRect(0,0,1024,704);
+  g.strokeStyle='#a9713f';g.lineWidth=44;g.strokeRect(22,22,980,600);g.fillStyle='#f3e3c8';g.fillRect(0,640,1024,64);g.fillStyle='#8a5a30';g.fillRect(8,608,1008,34);
+  g.fillStyle='#fff';g.fillRect(120,596,60,16);g.fillStyle='#f6b90c';g.fillRect(200,596,40,16);
+  g.globalAlpha=.85;g.fillStyle='#fff';g.strokeStyle='#fff';g.font='bold 44px Arial';g.fillText('Região',70,112);g.fillText('Centro-Oeste',70,164);g.fillRect(70,180,290,5);
+  g.font='36px Arial';g.fillText('GO · MT',70,236);g.fillText('MS · DF',70,282);
+  g.lineWidth=5;g.beginPath();g.arc(900,150,54,0,7);g.stroke();g.beginPath();g.moveTo(900,82);g.lineTo(916,150);g.lineTo(900,218);g.lineTo(884,150);g.closePath();g.moveTo(832,150);g.lineTo(900,134);g.lineTo(968,150);g.lineTo(900,166);g.closePath();g.stroke();g.font='30px Arial';g.fillText('N',889,70);g.globalAlpha=1;
+  const tx=new T.CanvasTexture(q);tx.encoding=T.sRGBEncoding;
+  const bd=new T.Mesh(new T.PlaneGeometry(9.6,6.6),new T.MeshBasicMaterial({map:tx}));bd.position.set(0,-.78,-2.6);sc.add(bd);
+  // boneco
+  const bo=new T.Group();sc.add(bo);
+  const L=(pts,m,seg)=>new T.Mesh(new T.LatheGeometry(new T.SplineCurve(pts.slice().reverse().map(q=>new T.Vector2(Math.max(0,q[0]),q[1]))).getPoints(48),seg||56),m);
+  const torso=L([[0,-1.2],[.3,-1.21],[.7,-1.3],[1,-1.5],[1.12,-1.82],[1.1,-2.4],[1.04,-3.6]],navy);torso.scale.set(1.06,1,.7);bo.add(torso);
+  bo.add(S(.5,white,0,-1.6,.5,.62,.95,.62));
+  const c1=B(.34,.15,.1,white,-.2,-1.36,.66);c1.rotation.z=-.6;c1.rotation.y=-.3;bo.add(c1);const c2=B(.34,.15,.1,white,.2,-1.36,.66);c2.rotation.z=.6;c2.rotation.y=.3;bo.add(c2);
+  const tie=B(.19,.8,.06,yel,0,-1.98,.82);tie.rotation.x=-.06;bo.add(tie);bo.add(B(.2,.16,.1,M(0xd99a00),0,-1.52,.79));
+  bo.add(C(.24,.27,.3,skin2,0,-1.16,-.06));
+  const hd=new T.Group();hd.position.set(0,-.98,0);bo.add(hd);
+  const cab=L([[0,1.98],[.45,1.92],[.82,1.65],[1,1.2],[1,.8],[.93,.42],[.78,.1],[.52,-.1],[.25,-.17],[0,-.18]],skin);cab.scale.set(1,1,.95);hd.add(cab);const bl1=new T.MeshStandardMaterial({color:new T.Color(0xe8736a).convertSRGBToLinear(),transparent:true,opacity:.2,roughness:.8});hd.add(S(.2,bl1,-.62,.66,.7,1,.6,.5));hd.add(S(.2,bl1,.62,.66,.7,1,.6,.5));
+  hd.add(S(1.02,hair,0,1.3,-.2,1.04,.76,.97));const qf=S(.5,hair,.06,1.7,.5,1.75,.46,1.05);qf.rotation.z=.1;qf.rotation.x=-.75;hd.add(qf);hd.add(S(.2,skin2,-1,.84,0,.55,1,.8));hd.add(S(.2,skin2,1,.84,0,.55,1,.8));
+  const lids=[];
+  [-1,1].forEach(s=>{const x=s*.37;
+    hd.add(S(.2,white,x,1,.8,1,1,.6));hd.add(S(.118,brown,x,1,.91,1,1,.5));hd.add(S(.056,black,x,1,.955,1,1,.4));hd.add(S(.025,white,x+.04,1.045,.985));
+    const ld=S(.215,skin,x,1,.815,1.02,1,.64);ld.visible=false;hd.add(ld);lids.push(ld);
+    const tr=new T.Mesh(new T.TorusGeometry(.275,.02,14,56),dark);tr.position.set(x,1,.97);hd.add(tr);
+    const tp=C(.024,.024,.95,dark,s*.66,1.02,.5);tp.rotation.x=Math.PI/2;tp.rotation.z=s*.1;hd.add(tp)});
+  const brows=[-1,1].map(s=>{const b=S(.1,hair,s*.37,1.37,.84,2.4,.3,.5);b.rotation.z=-s*.12;hd.add(b);return b});
+  const br=C(.024,.024,.2,dark,0,1.03,.99);br.rotation.z=Math.PI/2;hd.add(br);
+  hd.add(S(.12,skin2,0,.76,1,.95,1,.9));
+  const sm=new T.Mesh(new T.TorusGeometry(.24,.032,14,40,Math.PI*.8),lip);sm.rotation.z=Math.PI*1.1;sm.position.set(0,.66,.955);sm.rotation.x=.15;hd.add(sm);
+  const mo=new T.Group();mo.position.set(0,.5,.93);mo.add(S(.2,red,0,0,0,1.2,.85,.4));mo.add(S(.11,M(0xe8707c,.5),0,-.085,.045,1.25,.5,.6));mo.visible=false;hd.add(mo);const te=new T.Group();te.position.set(0,.6,.93);const esm=M(0xffffff,.22);[-2.5,-1.5,-.5,.5,1.5,2.5].forEach(i=>{const x=i*.058;te.add(S(.04,esm,x,-x*x*.5,.07-x*x*.5,1.05,1.05,.55))});te.visible=false;hd.add(te);
+  const arms=[-1,1].map(s=>{const sh=new T.Group();sh.position.set(s*1.0,-1.74,0);bo.add(sh);sh.add(S(.265,navy,0,0,0));sh.add(C(.265,.24,.95,navy,0,-.475,0));
+    const el=new T.Group();el.position.set(0,-.95,0);sh.add(el);el.add(S(.245,navy,0,0,0));el.add(C(.23,.2,.8,navy,0,-.4,0));el.add(C(.215,.215,.14,white,0,-.82,0));
+    el.add(S(.27,skin,0,-1.04,0,1,1.1,.8));
+    if(s>0){el.add(C(.035,.03,1.5,wood,0,-1.9,.12));el.add(S(.06,white,0,-2.66,.12))}
+    else{[-.16,-.055,.055,.16].forEach(dx=>el.add(S(.075,skin,dx,-1.36,0,1,2.2,.9)));const th=S(.075,skin,.3,-1.08,0,1,2,.9);th.rotation.z=1;el.add(th)}
+    return {sh,el,a:.1,b:0,s}});
+  let av=null;const DOWN=.56,q1=new T.Quaternion(),q2=new T.Quaternion(),q3=new T.Quaternion(),qx=new T.Quaternion(),eu=new T.Euler(),AZ=new T.Vector3(0,0,1),AX=new T.Vector3(1,0,0);
+  function wq(b,rest,qw){b.quaternion.copy(rest);b.parent.updateWorldMatrix(true,false);b.parent.getWorldQuaternion(q1);q2.copy(q1).multiply(rest).premultiply(qw);b.quaternion.copy(q1.invert().multiply(q2))}
+  function carrega(){
+    if(av||!T.GLTFLoader)return;bo.visible=false;if(!window.GLB_B64){if(document.readyState==='complete'){bo.visible=true;return}window.addEventListener('load',carrega,{once:true});return}
+    try{const bin=atob(window.GLB_B64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+      new T.GLTFLoader().parse(u.buffer,'',g=>{try{
+        const o=g.scene,Bn={},mm=[];
+        o.traverse(n=>{if(n.isBone)Bn[n.name]=n;if(n.isMesh){n.frustumCulled=false;if(/Bottom|Footwear/.test(n.name))n.visible=false;if(n.morphTargetDictionary)mm.push(n);
+          if(n.name==='Wolf3D_Outfit_Top'&&n.material.map&&n.material.map.image){try{const im=n.material.map.image,c=document.createElement('canvas');c.width=im.width;c.height=im.height;const x=c.getContext('2d');x.drawImage(im,0,0);const k=im.width/512,px=x.getImageData(150*k,270*k,1,1).data;x.fillStyle='rgb('+px[0]+','+px[1]+','+px[2]+')';x.fillRect(160*k,248*k,60*k,44*k);const t2=new T.CanvasTexture(c);t2.flipY=false;t2.encoding=T.sRGBEncoding;n.material.map=t2;n.material.needsUpdate=true}catch(e){}}}});
+        const ch=['Head','Neck','LeftArm','LeftForeArm','RightArm','RightForeArm'];if(!ch.every(k=>Bn[k])){bo.visible=true;return}
+        const rest={};ch.forEach(k=>rest[k]=Bn[k].quaternion.clone());
+        const top=new T.Box3().setFromObject(o).max.y,sk=6.6;o.scale.setScalar(sk);o.position.set(0,1.45-top*sk,0);
+        sc.add(o);bo.visible=false;av={o,B:Bn,rest,mm};
+      }catch(e){bo.visible=true}},()=>{bo.visible=true})}catch(e){bo.visible=true}
+  }
+  carrega();setTimeout(()=>{if(!av)bo.visible=true},9000);
+  let last=0,pal=null;
+  function tam(){if(!pal)return;const w=pal.clientWidth||320;r.setSize(w,Math.round(w*220/320),false)}
+  function qd(ts){requestAnimationFrame(qd);if(!cv.isConnected)return;const t=ts/1000,dt=Math.min(.05,t-last);last=t;
+    const md=(t-R3.t0<3.2)?R3.modo:(R3.modo==='viva'?'viva':'');
+    bo.rotation.y=Math.sin(t*.55)*.2;bo.position.y=Math.sin(t*1.8)*.012;
+    hd.rotation.z=Math.sin(t*.8)*.035;hd.rotation.y=Math.sin(t*1.3)*(FAL?.16:.07);hd.rotation.x=FAL?Math.sin(t*3.1)*.06:Math.sin(t*.9)*.02;
+    mo.visible=FAL;te.visible=false;sm.visible=!FAL;if(FAL){mo.scale.y=.5+.6*Math.abs(Math.sin(t*9.5))*(.65+.35*Math.sin(t*2.3));te.position.y=.5+.17*mo.scale.y-.05}
+    const bl=(t%4.3)<.13;lids.forEach(l=>l.visible=bl);
+    brows.forEach(b=>b.position.y=1.37+(FAL?Math.max(0,Math.sin(t*2.2))*.07:0));
+    arms.forEach(o=>{let a=.1,b=0;
+      if(md==='viva'){a=1.15;b=1.5+.35*Math.sin(t*11+(o.s>0?0:1.6))}
+      else if(FAL){if(o.s>0){a=.5+.1*Math.sin(t*2.1);b=2+.35*Math.sin(t*3.1)}else{const w=Math.max(0,Math.sin(t*.9));a=.1+.4*w;b=(2.1+.3*Math.sin(t*3.7))*Math.min(1,w*3)}}
+      else if(md==='oi'&&o.s<0){a=.6;b=2.2+.4*Math.sin(t*9)}
+      const k=Math.min(1,dt*7);o.a+=(a-o.a)*k;o.b+=(b-o.b)*k;
+      o.sh.rotation.z=o.s*o.a;o.el.rotation.z=o.s*o.b;o.el.rotation.x=-.3*Math.min(1,o.b);
+      if(av){const L=o.s>0?'Left':'Right';let u=0,f=0,e=.15,z=0;
+        if(md==='viva'){u=2.3;e=.5+.25*Math.sin(t*11+(o.s>0?0:1.6))}
+        else if(FAL){const w=o.s>0?1:Math.max(0,Math.sin(t*.9)),w3=Math.min(1,w*3);u=.22*w3;f=.4*w3;e=.15+(1.45+.25*Math.sin(t*(o.s>0?3.1:3.7)))*w3;z=(.2+.15*Math.sin(t*2.1))*w3}
+        else if(md==='oi'&&o.s<0){u=.35;f=.3;e=2.3;z=.3*Math.sin(t*9)}
+        const v=o.v||(o.v={u:0,f:0,e:.15,z:0}),k2=Math.min(1,dt*7);v.u+=(u-v.u)*k2;v.f+=(f-v.f)*k2;v.e+=(e-v.e)*k2;v.z+=(z-v.z)*k2;
+        q3.setFromAxisAngle(AX,-v.f);qx.setFromAxisAngle(AZ,-o.s*(DOWN-v.u));q3.multiply(qx);wq(av.B[L+'Arm'],av.rest[L+'Arm'],q3);
+        q3.setFromAxisAngle(AZ,o.s*v.z);qx.setFromAxisAngle(AX,-v.e);q3.multiply(qx);wq(av.B[L+'ForeArm'],av.rest[L+'ForeArm'],q3)}});
+    if(av){av.o.rotation.y=Math.sin(t*.55)*.2;eu.set(FAL?Math.sin(t*3.1)*.05:Math.sin(t*.9)*.02,Math.sin(t*1.3)*(FAL?.16:.07),Math.sin(t*.8)*.035);q3.setFromEuler(eu);av.B.Head.quaternion.copy(av.rest.Head).multiply(q3);
+      const env=.65+.35*Math.sin(t*2.3),W={viseme_aa:FAL?Math.abs(Math.sin(t*9.5))*.8*env:0,viseme_O:FAL?Math.max(0,Math.sin(t*3.7))*.5:0,viseme_E:FAL?Math.max(0,Math.sin(t*5.1+2))*.35:0},kk=Math.min(1,dt*18);
+      av.mm.forEach(m=>{for(const n in W){const i=m.morphTargetDictionary[n];if(i!==undefined)m.morphTargetInfluences[i]+=(W[n]-m.morphTargetInfluences[i])*kk}})}
+    r.render(sc,cam)}
+  cv.addEventListener('webglcontextlost',e=>e.preventDefault());
+  window.addEventListener('resize',tam);requestAnimationFrame(qd);
+  return {cv,modo:'',t0:0,poe(p){pal=p;p.appendChild(cv);tam()}};
+}
+function monta(){const p=app.querySelector('.palco');if(!p)return;if(R3===null)R3=ini3D()||false;
+  if(R3){R3.modo=S.modo||'';R3.t0=performance.now()/1000;R3.poe(p)}else p.innerHTML=AVE}
+const NOMES=['','Brasileira','Jovem','Grave','Bem grave'];
+function vozes(){if(!temVoz)return '';let s='<p class="conta"><b>Escolha a voz do professor</b> (toque para ouvir):</p><div class="linha">';for(let q=1;q<=4;q++)s+='<button class="btn '+(q===vz?'amarelo':'branco')+'" data-act="vz" data-v="'+q+'">'+q+' · '+NOMES[q]+'</button>';return s+'</div>'}
+function prof(html,fala,cls){S.msg=fala;S.modo=cls||'';return '<div class="prof '+(cls||'')+'"><div class="palco"></div>'+'<button class="balao" data-act="repete">'+html+(temVoz?'<small>Toque aqui para ouvir de novo</small>':'')+'</button></div>'}
+const vozBtn=()=>temVoz?'<button class="voz'+(vozOn?'':' off')+'" data-act="voz">Voz do professor: '+(vozOn?'ligada':'desligada')+'</button>':'<p class="conta">Este aparelho não toca áudio nesta página. As falas do professor continuam na tela.</p>';
+
+function texto(c,n){
+  if(n===1)return esc(c.x);
+  let k=0;
+  return c.x.split(' ').map(w=>{
+    const m=w.match(/^([^0-9A-Za-zÀ-ÿ]*)(.*?)([^0-9A-Za-zÀ-ÿ]*)$/),core=m[2];
+    if(!core)return esc(w);
+    let some=false,mostra='';
+    if(n===4){some=core.length>1;mostra=core[0]}
+    else if(core.length>=4||/\d/.test(core)){const r=k++%3;some=n===2?r===1:r!==0}
+    if(!some)return esc(w);
+    return esc(m[1])+'<button class="lac" data-act="abre" data-w="'+esc(core)+'" style="min-width:'+(Math.min(core.length,11)*.58+.6)+'em" aria-label="Mostrar palavra">'+esc(mostra)+'&nbsp;</button>'+esc(m[3]);
+  }).join(' ');
+}
+function home(){
+  const tot=F.length,ok=F.filter(c=>(lv[c.id]||0)>=5).length,prox=F.findIndex(c=>(lv[c.id]||0)<5);
+  const msg=ok===0?'Vamos treinar um trecho de cada vez. Cada trecho tem 5 níveis e vale uma estrela.':ok<tot?'Você já tem '+ok+' de '+tot+' estrelas. Continue assim!':'Todas as estrelas! Agora faça o ensaio geral em pé, em voz alta.';
+  let h=prof('<b>Olá, Samuel! Eu sou o professor Léo.</b>'+msg,[ok===0?'home0':ok<tot?'home1':'home2'],'oi')+vozBtn()+vozes()+
+   '<h1>Região Centro-Oeste</h1><div class="barra"><i style="width:'+(ok/tot*100)+'%"></i></div><p class="conta">'+ok+' de '+tot+' trechos decorados</p>'+
+   '<button class="btn verde" data-act="ir" data-i="'+(prox<0?0:prox)+'">'+(ok===0?'Começar o treino':prox<0?'Treinar de novo':'Continuar o treino')+'</button>'+
+   '<button class="btn amarelo" data-act="ensaio">Ensaio geral com cronômetro</button>';
+  P.forEach((p,pi)=>{
+    h+='<section class="parte"><h3><span>Parte '+(pi+1)+'.</span> '+p.t+'</h3>';
+    p.c.forEach(c=>{const n=lv[c.id]||0;let pp='';for(let q=1;q<=5;q++)pp+='<i class="'+(q<=n?'on':'')+'"></i>';
+      h+='<button class="trecho'+(n>=5?' feito':'')+'" data-act="ir" data-i="'+F.indexOf(c)+'"><span class="nome">'+c.t+'</span><span class="pips" aria-label="'+n+' de 5 níveis">'+pp+'</span><span class="estrela">'+(n>=5?'★':'')+'</span></button>'});
+    h+='</section>';
+  });
+  h+='<p class="conta">Aplicativo · versão 16 · professor humano 3D · quatro vozes para escolher</p>';
+  app.innerHTML=h;
+}
+function treino(){
+  const c=F[S.i],feito=lv[c.id]||0;
+  let h='<div class="topo"><button class="volta" data-act="home">← Início</button><span class="onde">Parte '+(c.p+1)+' · trecho '+(S.i+1)+' de '+F.length+'</span></div>'+vozBtn()+'<h2>'+c.t+'</h2><div class="niveis">';
+  NIV.forEach((n,q)=>{h+='<button data-act="nivel" data-n="'+(q+1)+'" class="'+(q+1===S.n?'atual':q+1<=feito?'passou':'')+'"><b>'+n[0]+'</b>'+n[1]+'</button>'});
+  h+='</div>';
+  if(S.festa){
+    h+=prof('<b>Estrela conquistada! ★</b>Você decorou “'+c.t+'”.',['festa'],'viva');
+    h+=S.i<F.length-1?'<button class="btn verde" data-act="ir" data-i="'+(S.i+1)+'">Próximo trecho: '+F[S.i+1].t+'</button>':'<p class="festa">Você chegou ao fim da apresentação!</p><button class="btn amarelo" data-act="ensaio">Fazer o ensaio geral</button>';
+    h+='<button class="btn branco" data-act="home">Voltar ao início</button>';
+    app.innerHTML=h;return;
+  }
+  h+=prof(FALA[S.n],['n'+S.n].concat(S.n===1&&c.d?['d-'+c.id]:[]));
+  if(S.n===5&&!S.ver)h+='<div class="cartao">Vire o celular para baixo, respire fundo e fale o trecho inteiro em voz alta.</div><button class="btn branco" data-act="ver">Conferir o texto</button>';
+  else h+='<div class="cartao">'+texto(c,S.n===5?1:S.n)+'</div>';
+  if(c.d&&S.n<5)h+='<p class="dica"><b>Dica:</b> '+c.d+'</p>';
+  h+='<div class="linha">'+(temVoz?'<button class="btn branco" data-act="ouvir">Ouvir o trecho</button>':'')+(S.n>1&&S.n<5?'<button class="btn branco" data-act="tudo">Mostrar tudo</button>':'')+'</div>';
+  h+='<button class="btn verde" data-act="passei">'+(S.n===5?'Consegui falar de cor!':'Consegui! Próximo nível')+'</button>';
+  h+='<div class="linha">'+(S.i>0?'<button class="btn branco" data-act="ir" data-i="'+(S.i-1)+'">← Anterior</button>':'')+(S.i<F.length-1?'<button class="btn branco" data-act="ir" data-i="'+(S.i+1)+'">Pular →</button>':'')+'</div>';
+  app.innerHTML=h;
+}
+const mmss=()=>String(Math.floor(seg/60)).padStart(2,'0')+':'+String(seg%60).padStart(2,'0');
+function ensaio(){
+  let h='<div class="topo"><button class="volta" data-act="home">← Início</button><span class="onde">Ensaio geral</span></div>'+
+   prof('Fique em pé e apresente tudo, seguindo o roteiro. Só abra um trecho se esquecer.',['ensaio'])+
+   '<div class="relogio" id="rel">'+mmss()+'</div><div class="linha"><button class="btn verde" data-act="crono">'+(tick?'Pausar':'Iniciar')+'</button><button class="btn branco" data-act="zera">Zerar</button></div>';
+  P.forEach((p,pi)=>{h+='<section class="parte"><h3><span>Parte '+(pi+1)+'.</span> '+p.t+'</h3>';p.c.forEach(c=>{h+='<details><summary>'+c.t+'</summary><p>'+esc(c.x)+'</p></details>'});h+='</section>'});
+  app.innerHTML=h;
+}
+function desenha(){({home,treino,ensaio})[S.v]();monta()}
+function vai(v){calar();S.v=v;desenha();window.scrollTo(0,0);diz((S.pre?['mb']:[]).concat(S.msg));S.pre=''}
+app.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,c=F[S.i];
+  if(a==='home')vai('home');
+  else if(a==='ensaio')vai('ensaio');
+  else if(a==='ir'){S.i=+b.dataset.i;S.n=Math.min((lv[F[S.i].id]||0)+1,5);S.ver=false;S.festa=false;vai('treino')}
+  else if(a==='nivel'){S.n=+b.dataset.n;S.ver=false;S.festa=false;vai('treino')}
+  else if(a==='abre'){b.textContent=b.dataset.w;b.classList.add('ok')}
+  else if(a==='tudo'){app.querySelectorAll('.lac').forEach(x=>{x.textContent=x.dataset.w;x.classList.add('ok')})}
+  else if(a==='ver'){S.ver=true;desenha()}
+  else if(a==='passei'){lv[c.id]=Math.max(lv[c.id]||0,S.n);salva();if(S.n===5)S.festa=true;else{S.n++;S.ver=false;S.pre='Muito bem! '}vai('treino')}
+  else if(a==='ouvir'){if(atual)calar();else diz(['x-'+c.id],true)}
+  else if(a==='repete'){if(atual)calar();else diz(S.msg,true)}
+  else if(a==='vz'){vz=+b.dataset.v;if(typeof guardaVoz==='function')guardaVoz(vz);lv._v=vz;vozOn=true;delete lv._mudo;salva();calar();desenha();diz(['home0'],true)}
+  else if(a==='voz'){vozOn=!vozOn;if(vozOn)delete lv._mudo;else lv._mudo=1;salva();calar();desenha();diz(S.msg)}
+  else if(a==='crono'){if(tick){clearInterval(tick);tick=null}else tick=setInterval(()=>{seg++;const r=document.getElementById('rel');if(r)r.textContent=mmss()},1000);b.textContent=tick?'Pausar':'Iniciar'}
+  else if(a==='zera'){clearInterval(tick);tick=null;seg=0;desenha()}
+});
+desenha();
+const CLIPES=["d-0-2", "d-1-0", "d-1-1", "d-1-2", "d-1-3", "d-1-4", "d-2-0", "d-2-1", "d-2-3", "d-2-4", "d-3-1", "d-3-2", "d-3-3", "d-3-5", "d-3-6", "d-4-1", "d-4-3", "d-4-4", "d-5-1", "d-5-2", "ensaio", "festa", "home0", "home1", "home2", "mb", "n1", "n2", "n3", "n4", "n5", "x-0-0", "x-0-1", "x-0-2", "x-0-3", "x-1-0", "x-1-1", "x-1-2", "x-1-3", "x-1-4", "x-1-5", "x-2-0", "x-2-1", "x-2-2", "x-2-3", "x-2-4", "x-3-0", "x-3-1", "x-3-2", "x-3-3", "x-3-4", "x-3-5", "x-3-6", "x-4-0", "x-4-1", "x-4-2", "x-4-3", "x-4-4", "x-4-5", "x-5-0", "x-5-1", "x-5-2", "x-5-3"];
+function guardaVoz(v){try{if(!window.caches)return;caches.open('leo-audio-v1').then(c=>CLIPES.forEach(n=>{const u='v'+v+'/'+n+'.mp3';c.match(u).then(r=>{if(!r)c.add(u).catch(()=>{})})}))}catch(e){}}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(()=>guardaVoz(vz)).catch(()=>{})})}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+PROFESSOR LÉO DO SAMUEL — aplicativo (PWA)
+
+Como instalar no celular
+1. Publique esta pasta inteira em um endereço https (por exemplo Netlify Drop, GitHub Pages ou Vercel).
+2. Abra o endereço no Chrome do celular.
+3. Toque em "Instalar app" ou em Menu > "Adicionar à tela inicial".
+4. Abra pelo ícone. Depois da primeira vez, funciona sem internet com a voz escolhida.
+
+Observações
+- Abrir o index.html direto da pasta de arquivos não instala o aplicativo: o navegador exige um endereço https.
+- O modelo 3D do professor é um avatar Ready Player Me obtido de um repositório público de tutorial. Use em casa; não publique em loja nem venda sem conferir a licença do avatar.
