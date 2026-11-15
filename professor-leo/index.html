@@ -180,7 +180,7 @@ const AVE='<svg viewBox="0 0 320 220" role="img" aria-label="Professor Léo na f
 let vz=lv._v||1,vozOn=!lv._mudo,fila=[],atual=null;
 const boca=on=>{FAL=on;document.body.classList.toggle('falando',on)};
 const som=temVoz?new Audio():null;
-function prox(){const n=fila.shift();if(!n){atual=null;boca(false);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=2';const p=som.play();if(p&&p.catch)p.catch(()=>{fila=[];atual=null;boca(false)})}
+function prox(){const n=fila.shift();if(!n){atual=null;boca(false);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=3';const p=som.play();if(p&&p.catch)p.catch(()=>{fila=[];atual=null;boca(false)})}
 if(som){som.preload='auto';som.addEventListener('ended',prox);som.addEventListener('playing',()=>boca(true));som.addEventListener('pause',()=>boca(false));som.addEventListener('error',()=>{fila=[];atual=null;boca(false)})}
 function diz(l,forca){if(!som||(!vozOn&&!forca)||!l||!l.length)return;calar();fila=l.slice();prox()}
 function calar(){fila=[];atual=null;if(som){try{som.pause()}catch(e){}}boca(false)}
@@ -287,7 +287,7 @@ function ini3D(){
 }
 function monta(){const p=app.querySelector('.palco');if(!p)return;if(R3===null)R3=ini3D()||false;
   if(R3){R3.modo=S.modo||'';R3.t0=performance.now()/1000;R3.poe(p)}else p.innerHTML=AVE}
-const NOMES=['','Brasileira grave','Jovem','Grave','Bem grave'];
+const NOMES=['','Brasileira','Jovem','Grave','Bem grave'];
 function vozes(){if(!temVoz)return '';let s='<p class="conta"><b>Escolha a voz do professor</b> (toque para ouvir):</p><div class="linha">';for(let q=1;q<=4;q++)s+='<button class="btn '+(q===vz?'amarelo':'branco')+'" data-act="vz" data-v="'+q+'">'+q+' · '+NOMES[q]+'</button>';return s+'</div>'}
 function prof(html,fala,cls){S.msg=fala;S.modo=cls||'';return '<div class="prof '+(cls||'')+'"><div class="palco"></div>'+'<button class="balao" data-act="repete">'+html+(temVoz?'<small>Toque aqui para ouvir de novo</small>':'')+'</button></div>'}
 const vozBtn=()=>temVoz?'<button class="voz'+(vozOn?'':' off')+'" data-act="voz">Voz do professor: '+(vozOn?'ligada':'desligada')+'</button>':'<p class="conta">Este aparelho não toca áudio nesta página. As falas do professor continuam na tela.</p>';
@@ -318,7 +318,7 @@ function home(){
       h+='<button class="trecho'+(n>=5?' feito':'')+'" data-act="ir" data-i="'+F.indexOf(c)+'"><span class="nome">'+c.t+'</span><span class="pips" aria-label="'+n+' de 5 níveis">'+pp+'</span><span class="estrela">'+(n>=5?'★':'')+'</span></button>'});
     h+='</section>';
   });
-  h+='<p class="conta">Aplicativo · versão 17 · professor humano 3D · quatro vozes para escolher</p>';
+  h+='<p class="conta">Aplicativo · versão 18 · professor humano 3D · quatro vozes para escolher</p>';
   app.innerHTML=h;
 }
 function treino(){
@@ -370,7 +370,7 @@ app.addEventListener('click',e=>{
 });
 desenha();
 const CLIPES=["d-0-2", "d-1-0", "d-1-1", "d-1-2", "d-1-3", "d-1-4", "d-2-0", "d-2-1", "d-2-3", "d-2-4", "d-3-1", "d-3-2", "d-3-3", "d-3-5", "d-3-6", "d-4-1", "d-4-3", "d-4-4", "d-5-1", "d-5-2", "ensaio", "festa", "home0", "home1", "home2", "mb", "n1", "n2", "n3", "n4", "n5", "x-0-0", "x-0-1", "x-0-2", "x-0-3", "x-1-0", "x-1-1", "x-1-2", "x-1-3", "x-1-4", "x-1-5", "x-2-0", "x-2-1", "x-2-2", "x-2-3", "x-2-4", "x-3-0", "x-3-1", "x-3-2", "x-3-3", "x-3-4", "x-3-5", "x-3-6", "x-4-0", "x-4-1", "x-4-2", "x-4-3", "x-4-4", "x-4-5", "x-5-0", "x-5-1", "x-5-2", "x-5-3"];
-function guardaVoz(v){try{if(!window.caches)return;caches.open('leo-audio-v2').then(c=>CLIPES.forEach(n=>{const u='v'+v+'/'+n+'.mp3?g=2';c.match(u).then(r=>{if(!r)c.add(u).catch(()=>{})})}))}catch(e){}}
+function guardaVoz(v){try{if(!window.caches)return;caches.open('leo-audio-v3').then(c=>CLIPES.forEach(n=>{const u='v'+v+'/'+n+'.mp3?g=3';c.match(u).then(r=>{if(!r)c.add(u).catch(()=>{})})}))}catch(e){}}
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(()=>guardaVoz(vz)).catch(()=>{})})}
 </script>
 </body>
