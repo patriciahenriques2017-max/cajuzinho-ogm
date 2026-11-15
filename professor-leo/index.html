@@ -180,10 +180,12 @@ const AVE='<svg viewBox="0 0 320 220" role="img" aria-label="Professor Léo na f
 let vz=lv._v||1,vozOn=!lv._mudo,fila=[],atual=null;
 const boca=on=>{FAL=on;document.body.classList.toggle('falando',on)};
 const som=temVoz?new Audio():null;
-function prox(){const n=fila.shift();if(!n){atual=null;boca(false);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=4';const p=som.play();if(p&&p.catch)p.catch(()=>{fila=[];atual=null;boca(false)})}
-if(som){som.preload='auto';som.addEventListener('ended',prox);som.addEventListener('playing',()=>boca(true));som.addEventListener('pause',()=>boca(false));som.addEventListener('error',()=>{fila=[];atual=null;boca(false)})}
+let AUTO=false,laco=null,tAuto=null;
+function pintaAuto(){document.querySelectorAll('[data-act="auto"]').forEach(b=>{b.textContent=AUTO?'AUTO ligado':'AUTO';b.classList.toggle('amarelo',AUTO);b.classList.toggle('branco',!AUTO);b.setAttribute('aria-pressed',AUTO?'true':'false')})}
+function prox(){const n=fila.shift();if(!n){atual=null;boca(false);if(AUTO&&laco)tAuto=setTimeout(()=>{if(AUTO&&laco){fila=laco.slice();prox()}},900);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=4';const p=som.play();if(p&&p.catch)p.catch(()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
+if(som){som.preload='auto';som.addEventListener('ended',prox);som.addEventListener('playing',()=>boca(true));som.addEventListener('pause',()=>boca(false));som.addEventListener('error',()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
 function diz(l,forca){if(!som||(!vozOn&&!forca)||!l||!l.length)return;calar();fila=l.slice();prox()}
-function calar(){fila=[];atual=null;if(som){try{som.pause()}catch(e){}}boca(false)}
+function calar(){AUTO=false;laco=null;clearTimeout(tAuto);pintaAuto();fila=[];atual=null;if(som){try{som.pause()}catch(e){}}boca(false)}
 
 let FAL=false,R3=null;
 function ini3D(){
@@ -322,7 +324,7 @@ function home(){
       h+='<button class="trecho'+(n>=5?' feito':'')+'" data-act="ir" data-i="'+F.indexOf(c)+'"><span class="nome">'+c.t+'</span><span class="pips" aria-label="'+n+' de 5 níveis">'+pp+'</span><span class="estrela">'+(n>=5?'★':'')+'</span></button>'});
     h+='</section>';
   });
-  h+='<p class="conta">Aplicativo · versão 19 · professor humano 3D · quatro vozes para escolher</p>';
+  h+='<p class="conta">Aplicativo · versão 20 · professor humano 3D · quatro vozes para escolher</p>';
   app.innerHTML=h;
 }
 function treino(){
@@ -340,7 +342,7 @@ function treino(){
   if(S.n===5&&!S.ver)h+='<div class="cartao">Vire o celular para baixo, respire fundo e fale o trecho inteiro em voz alta.</div><button class="btn branco" data-act="ver">Conferir o texto</button>';
   else h+='<div class="cartao">'+texto(c,S.n===5?1:S.n)+'</div>';
   if(c.d&&S.n<5)h+='<p class="dica"><b>Dica:</b> '+c.d+'</p>';
-  h+='<div class="linha">'+(temVoz?'<button class="btn branco" data-act="ouvir">Ouvir o trecho</button>':'')+(S.n>1&&S.n<5?'<button class="btn branco" data-act="tudo">Mostrar tudo</button>':'')+'</div>';
+  h+='<div class="linha">'+(temVoz?'<button class="btn branco" data-act="ouvir">Ouvir o trecho</button><button class="btn branco" data-act="auto" aria-pressed="false">AUTO</button>':'')+(S.n>1&&S.n<5?'<button class="btn branco" data-act="tudo">Mostrar tudo</button>':'')+'</div>';
   h+='<button class="btn verde" data-act="passei">'+(S.n===5?'Consegui falar de cor!':'Consegui! Próximo nível')+'</button>';
   h+='<div class="linha">'+(S.i>0?'<button class="btn branco" data-act="ir" data-i="'+(S.i-1)+'">← Anterior</button>':'')+(S.i<F.length-1?'<button class="btn branco" data-act="ir" data-i="'+(S.i+1)+'">Pular →</button>':'')+'</div>';
   app.innerHTML=h;
@@ -366,6 +368,7 @@ app.addEventListener('click',e=>{
   else if(a==='ver'){S.ver=true;desenha()}
   else if(a==='passei'){lv[c.id]=Math.max(lv[c.id]||0,S.n);salva();if(S.n===5)S.festa=true;else{S.n++;S.ver=false;S.pre='Muito bem! '}vai('treino')}
   else if(a==='ouvir'){if(atual)calar();else diz(['x-'+c.id],true)}
+  else if(a==='auto'){if(AUTO)calar();else{const l=['x-'+c.id];diz(l,true);AUTO=true;laco=l;pintaAuto()}}
   else if(a==='repete'){if(atual)calar();else diz(S.msg,true)}
   else if(a==='vz'){vz=+b.dataset.v;if(typeof guardaVoz==='function')guardaVoz(vz);lv._v=vz;vozOn=true;delete lv._mudo;salva();calar();desenha();diz(['home0'],true)}
   else if(a==='voz'){vozOn=!vozOn;if(vozOn)delete lv._mudo;else lv._mudo=1;salva();calar();desenha();diz(S.msg)}
