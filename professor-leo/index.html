@@ -156,7 +156,7 @@ const P=[
  {t:'Variações linguísticas',x:'As variações linguísticas refletem a herança dos bandeirantes paulistas combinada a fortes influências migratórias dos mineiros, gaúchos e a fronteira paraguaia. Por exemplo, Arreda: tirar, remover; e Capaz: expressão de surpresa ou dúvida.'}
 ]},
 {t:'Encerramento',c:[
- {t:'Princípio',x:'O princípio que relacionei com o assunto foi a Individualidade: Deus criou cada região com uma vocação e uma beleza específicas. A região Centro-Oeste abriga paisagens e patrimônios de valor inigualável, oferecendo cenários perfeitos para o ecoturismo e o turismo cultural.'},
+ {t:'Princípios',x:'Os princípios que relacionei com o assunto foram: Individualidade: aprendi que Deus criou cada região com características diferentes das outras. Soberania: aprendi que devemos usar nosso conhecimento geográfico com sabedoria e que podemos adorar a Deus em qualquer lugar e a qualquer momento.',d:'Dois princípios: Individualidade e Soberania.'},
  {t:'Posso relacionar',x:'Posso relacionar o assunto pesquisado sobre a Região Centro-Oeste na disciplina de Geografia, em primeiro lugar, com o meu pai, que é professor de Geografia e sempre compartilha seu conhecimento geográfico comigo. Também relaciono o clima da região pesquisada com o da Região Nordeste, pois ambas apresentam temperaturas médias elevadas na maior parte do ano.',d:'Duas relações: meu pai e o clima do Nordeste.'},
  {t:'Agradecimento',x:'Primeiro sou grato a Deus, que me capacitou para realizar essa pesquisa, à minha família, que esteve presente me apoiando, aos colegas de classe, professores e à banca.',d:'A ordem: Deus, família, colegas, professores, banca.'},
  {t:'Conclusão',x:'Concluo este trabalho refletindo como foi importante conhecer os aspectos da Região Centro-Oeste, sua riqueza cultural, sua força econômica e a singularidade de suas paisagens, compreendendo ainda mais a diversidade e a importância dessa região para o nosso país. Agradeço a atenção de todos!'}
@@ -184,7 +184,7 @@ const som=temVoz?new Audio():null;
 let AUTO=false,laco=null,tAuto=null,VEL=[.8,1,1.25].indexOf(lv._vel)<0?1:lv._vel;
 function pintaVel(){document.querySelectorAll('[data-act="vel"]').forEach(b=>{const on=+b.dataset.v===VEL;b.classList.toggle('amarelo',on);b.classList.toggle('branco',!on);b.setAttribute('aria-pressed',on?'true':'false')})}
 function pintaAuto(){document.querySelectorAll('[data-act="auto"]').forEach(b=>{b.textContent=AUTO?'AUTO ligado':'AUTO';b.classList.toggle('amarelo',AUTO);b.classList.toggle('branco',!AUTO);b.setAttribute('aria-pressed',AUTO?'true':'false')})}
-function prox(){const n=fila.shift();if(!n){atual=null;boca(false);if(AUTO&&laco)tAuto=setTimeout(()=>{if(AUTO&&laco){fila=laco.slice();prox()}},900);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=7';som.defaultPlaybackRate=VEL;som.playbackRate=VEL;const p=som.play();if(p&&p.catch)p.catch(()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
+function prox(){const n=fila.shift();if(!n){atual=null;boca(false);if(AUTO&&laco)tAuto=setTimeout(()=>{if(AUTO&&laco){fila=laco.slice();prox()}},900);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=8';som.defaultPlaybackRate=VEL;som.playbackRate=VEL;const p=som.play();if(p&&p.catch)p.catch(()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
 if(som){som.preload='auto';try{som.preservesPitch=true;som.webkitPreservesPitch=true;som.mozPreservesPitch=true}catch(e){}som.addEventListener('ended',prox);som.addEventListener('playing',()=>boca(true));som.addEventListener('pause',()=>boca(false));som.addEventListener('error',()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
 function diz(l,forca){if(!som||(!vozOn&&!forca)||!l||!l.length)return;calar();fila=l.slice();prox()}
 function calar(){AUTO=false;laco=null;clearTimeout(tAuto);pintaAuto();fila=[];atual=null;if(som){try{som.pause()}catch(e){}}boca(false)}
@@ -326,7 +326,7 @@ function home(){
       h+='<button class="trecho'+(n>=5?' feito':'')+'" data-act="ir" data-i="'+F.indexOf(c)+'"><span class="nome">'+c.t+'</span><span class="pips" aria-label="'+n+' de 5 níveis">'+pp+'</span><span class="estrela">'+(n>=5?'★':'')+'</span></button>'});
     h+='</section>';
   });
-  h+='<p class="conta">Aplicativo · versão 24 · professor humano 3D · quatro vozes para escolher</p>';
+  h+='<p class="conta">Aplicativo · versão 25 · professor humano 3D · quatro vozes para escolher</p>';
   app.innerHTML=h;
 }
 function treino(){
@@ -380,7 +380,7 @@ app.addEventListener('click',e=>{
 });
 desenha();
 const CLIPES=["d-0-2", "d-1-0", "d-1-1", "d-1-2", "d-1-3", "d-1-4", "d-2-0", "d-2-1", "d-2-3", "d-2-4", "d-3-1", "d-3-2", "d-3-3", "d-3-5", "d-3-6", "d-4-1", "d-4-3", "d-4-4", "d-5-1", "d-5-2", "ensaio", "festa", "home0", "home1", "home2", "mb", "n1", "n2", "n3", "n4", "n5", "x-0-0", "x-0-1", "x-0-2", "x-0-3", "x-1-0", "x-1-1", "x-1-2", "x-1-3", "x-1-4", "x-1-5", "x-2-0", "x-2-1", "x-2-2", "x-2-3", "x-2-4", "x-3-0", "x-3-1", "x-3-2", "x-3-3", "x-3-4", "x-3-5", "x-3-6", "x-4-0", "x-4-1", "x-4-2", "x-4-3", "x-4-4", "x-4-5", "x-5-0", "x-5-1", "x-5-2", "x-5-3"];
-function guardaVoz(v){try{if(!window.caches)return;caches.open('leo-audio-v7').then(c=>CLIPES.forEach(n=>{const u='v'+v+'/'+n+'.mp3?g=7';c.match(u).then(r=>{if(!r)c.add(u).catch(()=>{})})}))}catch(e){}}
+function guardaVoz(v){try{if(!window.caches)return;caches.open('leo-audio-v8').then(c=>CLIPES.forEach(n=>{const u='v'+v+'/'+n+'.mp3?g=8';c.match(u).then(r=>{if(!r)c.add(u).catch(()=>{})})}))}catch(e){}}
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(()=>guardaVoz(vz)).catch(()=>{})})}
 </script>
 </body>
