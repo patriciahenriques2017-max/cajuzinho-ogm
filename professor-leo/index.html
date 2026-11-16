@@ -143,9 +143,9 @@ const P=[
  {t:'Agricultura',x:'A agricultura evoluiu da subsistência familiar para um modelo comercial altamente produtivo, tecnológico e voltado para grandes mercados e exportação. Conhecida como “celeiro” do país, a região destaca-se no cultivo de grãos como soja e milho, além de algodão, cana-de-açúcar e diversos outros produtos agrícolas.',d:'Quatro plantações: soja, milho, algodão e cana-de-açúcar.'},
  {t:'Pecuária',x:'A pecuária é a principal atividade econômica do Centro-Oeste, impulsionada pelo maior rebanho bovino do país, cerca de 70 milhões de cabeças. A região também se destaca na criação de suínos, ovinos, equinos e bubalinos.',d:'Suínos são porcos, ovinos são ovelhas, equinos são cavalos, bubalinos são búfalos.'},
  {t:'Extrativismo',x:'No extrativismo vegetal, destaque para madeira, erva-mate e látex. No extrativismo mineral, ouro, diamantes e grandes reservas de manganês no Maciço de Urucum.',d:'Vegetal: madeira, erva-mate, látex. Mineral: ouro, diamantes, manganês.'},
- {t:'Indústria',x:'O setor industrial no Centro-Oeste vem acelerando seu desenvolvimento, impulsionado pela mecanização do campo e incentivos governamentais. Esse parque industrial destaca-se pelo processamento agroalimentar (soja, frigoríficos, laticínios) e bioenergia, além de segmentos relevantes como a indústria química, automobilística, de bebidas e celulose.'},
+ {t:'Indústria',x:'O setor industrial no Centro-Oeste vem acelerando seu desenvolvimento, impulsionado pela mecanização do campo, além de segmentos relevantes como a indústria química, automobilística, de bebidas e celulose.'},
  {t:'Transporte',x:'O transporte é predominantemente rodoviário. Para reduzir custos e otimizar o transporte de grãos e minérios, ganham força as ferrovias e as hidrovias estratégicas, como a do Paraná e Paraguai.',d:'Rodovia é estrada, ferrovia é trem, hidrovia é rio.'},
- {t:'Turismo',x:'O turismo na região reúne destinos renomados de ecoturismo e lazer, como as paisagens do Cerrado nas Chapadas dos Veadeiros e dos Guimarães, a rica fauna do Pantanal e as águas termais de Caldas Novas. Além do turismo cultural e histórico, com o casario colonial e tradições de cidades como Pirenópolis e Goiás, bem como a arquitetura modernista de Brasília.',d:'Natureza: Chapadas, Pantanal, Caldas Novas. Cultura: Pirenópolis, Goiás, Brasília.'}
+ {t:'Turismo',x:'O turismo na região reúne as paisagens do Cerrado nas Chapadas dos Veadeiros e dos Guimarães, a rica fauna do Pantanal e as águas termais de Caldas Novas.',d:'Três destinos: Chapadas, Pantanal e Caldas Novas.'}
 ]},
 {t:'Cultura da região',c:[
  {t:'Cultura',x:'A cultura da região Centro-Oeste é uma rica tapeçaria moldada pela fusão das tradições indígenas, a herança dos bandeirantes, as manifestações folclóricas do Cerrado e o dinamismo da capital federal.'},
@@ -184,7 +184,7 @@ const som=temVoz?new Audio():null;
 let AUTO=false,laco=null,tAuto=null,VEL=[.8,1,1.25].indexOf(lv._vel)<0?1:lv._vel;
 function pintaVel(){document.querySelectorAll('[data-act="vel"]').forEach(b=>{const on=+b.dataset.v===VEL;b.classList.toggle('amarelo',on);b.classList.toggle('branco',!on);b.setAttribute('aria-pressed',on?'true':'false')})}
 function pintaAuto(){document.querySelectorAll('[data-act="auto"]').forEach(b=>{b.textContent=AUTO?'AUTO ligado':'AUTO';b.classList.toggle('amarelo',AUTO);b.classList.toggle('branco',!AUTO);b.setAttribute('aria-pressed',AUTO?'true':'false')})}
-function prox(){const n=fila.shift();if(!n){atual=null;boca(false);if(AUTO&&laco)tAuto=setTimeout(()=>{if(AUTO&&laco){fila=laco.slice();prox()}},900);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=4';som.defaultPlaybackRate=VEL;som.playbackRate=VEL;const p=som.play();if(p&&p.catch)p.catch(()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
+function prox(){const n=fila.shift();if(!n){atual=null;boca(false);if(AUTO&&laco)tAuto=setTimeout(()=>{if(AUTO&&laco){fila=laco.slice();prox()}},900);return}atual=n;som.src='v'+vz+'/'+n+'.mp3?g=5';som.defaultPlaybackRate=VEL;som.playbackRate=VEL;const p=som.play();if(p&&p.catch)p.catch(()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
 if(som){som.preload='auto';try{som.preservesPitch=true;som.webkitPreservesPitch=true;som.mozPreservesPitch=true}catch(e){}som.addEventListener('ended',prox);som.addEventListener('playing',()=>boca(true));som.addEventListener('pause',()=>boca(false));som.addEventListener('error',()=>{AUTO=false;laco=null;pintaAuto();fila=[];atual=null;boca(false)})}
 function diz(l,forca){if(!som||(!vozOn&&!forca)||!l||!l.length)return;calar();fila=l.slice();prox()}
 function calar(){AUTO=false;laco=null;clearTimeout(tAuto);pintaAuto();fila=[];atual=null;if(som){try{som.pause()}catch(e){}}boca(false)}
@@ -326,7 +326,7 @@ function home(){
       h+='<button class="trecho'+(n>=5?' feito':'')+'" data-act="ir" data-i="'+F.indexOf(c)+'"><span class="nome">'+c.t+'</span><span class="pips" aria-label="'+n+' de 5 níveis">'+pp+'</span><span class="estrela">'+(n>=5?'★':'')+'</span></button>'});
     h+='</section>';
   });
-  h+='<p class="conta">Aplicativo · versão 21 · professor humano 3D · quatro vozes para escolher</p>';
+  h+='<p class="conta">Aplicativo · versão 22 · professor humano 3D · quatro vozes para escolher</p>';
   app.innerHTML=h;
 }
 function treino(){
@@ -380,7 +380,7 @@ app.addEventListener('click',e=>{
 });
 desenha();
 const CLIPES=["d-0-2", "d-1-0", "d-1-1", "d-1-2", "d-1-3", "d-1-4", "d-2-0", "d-2-1", "d-2-3", "d-2-4", "d-3-1", "d-3-2", "d-3-3", "d-3-5", "d-3-6", "d-4-1", "d-4-3", "d-4-4", "d-5-1", "d-5-2", "ensaio", "festa", "home0", "home1", "home2", "mb", "n1", "n2", "n3", "n4", "n5", "x-0-0", "x-0-1", "x-0-2", "x-0-3", "x-1-0", "x-1-1", "x-1-2", "x-1-3", "x-1-4", "x-1-5", "x-2-0", "x-2-1", "x-2-2", "x-2-3", "x-2-4", "x-3-0", "x-3-1", "x-3-2", "x-3-3", "x-3-4", "x-3-5", "x-3-6", "x-4-0", "x-4-1", "x-4-2", "x-4-3", "x-4-4", "x-4-5", "x-5-0", "x-5-1", "x-5-2", "x-5-3"];
-function guardaVoz(v){try{if(!window.caches)return;caches.open('leo-audio-v4').then(c=>CLIPES.forEach(n=>{const u='v'+v+'/'+n+'.mp3?g=4';c.match(u).then(r=>{if(!r)c.add(u).catch(()=>{})})}))}catch(e){}}
+function guardaVoz(v){try{if(!window.caches)return;caches.open('leo-audio-v5').then(c=>CLIPES.forEach(n=>{const u='v'+v+'/'+n+'.mp3?g=5';c.match(u).then(r=>{if(!r)c.add(u).catch(()=>{})})}))}catch(e){}}
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(()=>guardaVoz(vz)).catch(()=>{})})}
 </script>
 </body>
