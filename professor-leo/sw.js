@@ -1,4 +1,4 @@
-const NUCLEO='leo-nucleo-v26',AUDIO='leo-audio-v9';
+const NUCLEO='leo-nucleo-v27',AUDIO='leo-audio-v9';
 const ARQ=['./','index.html','manifest.webmanifest','modelo.js','lib/three.min.js','lib/GLTFLoader.js','icons/icone-192.png','icons/icone-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(NUCLEO).then(c=>c.addAll(ARQ)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==NUCLEO&&k!==AUDIO).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

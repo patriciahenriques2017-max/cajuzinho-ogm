@@ -69,6 +69,13 @@ body.falando .ae{animation:gestoE 3s infinite ease-in-out}
 
 .barra{height:14px;background:var(--papel);border:2px solid var(--tinta);border-radius:99px;overflow:hidden}
 .barra i{display:block;height:100%;background:var(--ipe)}
+.barra.ouro{height:18px;border-color:#7a5a00;box-shadow:0 0 0 2px #ffe27a,0 0 14px 3px rgba(246,185,12,.75);animation:pulsa 1.8s ease-in-out infinite}
+.barra.ouro i{background:linear-gradient(100deg,#a8770a 0%,#f6c400 22%,#fff7c8 38%,#ffd84a 50%,#c99400 70%,#ffe680 88%,#a8770a 100%);background-size:250% 100%;animation:brilho 2.2s linear infinite}
+@keyframes brilho{from{background-position:250% 0}to{background-position:0 0}}
+@keyframes pulsa{0%,100%{box-shadow:0 0 0 2px #ffe27a,0 0 10px 2px rgba(246,185,12,.55)}50%{box-shadow:0 0 0 2px #fff1b0,0 0 20px 6px rgba(255,215,0,.9)}}
+.conta.ouro{color:#8a6400;font-weight:bold}
+@media (prefers-reduced-motion:reduce){.barra.ouro,.barra.ouro i{animation:none}}
+
 .conta{font-size:16px;color:var(--suave)}
 
 .btn{display:block;width:100%;padding:14px 16px;border-radius:14px;font-family:var(--display);font-size:21px;font-weight:800;text-align:center;border:2px solid var(--tinta);box-shadow:0 4px 0 var(--tinta)}
@@ -317,7 +324,7 @@ function home(){
   const tot=F.length,ok=F.filter(c=>(lv[c.id]||0)>=5).length,prox=F.findIndex(c=>(lv[c.id]||0)<5);
   const msg=ok===0?'Vamos treinar um trecho de cada vez. Cada trecho tem 5 níveis e vale uma estrela.':ok<tot?'Você já tem '+ok+' de '+tot+' estrelas. Continue assim!':'Todas as estrelas! Agora faça o ensaio geral em pé, em voz alta.';
   let h=prof('<b>Olá, Samuel! Eu sou o professor Léo.</b>'+msg,[ok===0?'home0':ok<tot?'home1':'home2'],'oi')+vozBtn()+vozes()+
-   '<h1>Região Centro-Oeste</h1><div class="barra"><i style="width:'+(ok/tot*100)+'%"></i></div><p class="conta">'+ok+' de '+tot+' trechos decorados</p>'+
+   '<h1>Região Centro-Oeste</h1><div class="barra'+(ok===tot?' ouro':'')+'" role="progressbar" aria-valuemin="0" aria-valuemax="'+tot+'" aria-valuenow="'+ok+'"><i style="width:'+(ok/tot*100)+'%"></i></div><p class="conta'+(ok===tot?' ouro':'')+'">'+(ok===tot?'★ Todas as '+tot+' estrelas! ★':ok+' de '+tot+' trechos decorados')+'</p>'+
    '<button class="btn verde" data-act="ir" data-i="'+(prox<0?0:prox)+'">'+(ok===0?'Começar o treino':prox<0?'Treinar de novo':'Continuar o treino')+'</button>'+
    '<button class="btn amarelo" data-act="ensaio">Ensaio geral com cronômetro</button>';
   P.forEach((p,pi)=>{
@@ -326,7 +333,7 @@ function home(){
       h+='<button class="trecho'+(n>=5?' feito':'')+'" data-act="ir" data-i="'+F.indexOf(c)+'"><span class="nome">'+c.t+'</span><span class="pips" aria-label="'+n+' de 5 níveis">'+pp+'</span><span class="estrela">'+(n>=5?'★':'')+'</span></button>'});
     h+='</section>';
   });
-  h+='<p class="conta">Aplicativo · versão 26 · professor humano 3D · quatro vozes para escolher</p>';
+  h+='<p class="conta">Aplicativo · versão 27 · professor humano 3D · quatro vozes para escolher</p>';
   app.innerHTML=h;
 }
 function treino(){
