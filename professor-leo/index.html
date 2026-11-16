@@ -74,6 +74,7 @@ body.falando .ae{animation:gestoE 3s infinite ease-in-out}
 @keyframes brilho{from{background-position:250% 0}to{background-position:0 0}}
 @keyframes pulsa{0%,100%{box-shadow:0 0 0 2px #ffe27a,0 0 10px 2px rgba(246,185,12,.55)}50%{box-shadow:0 0 0 2px #fff1b0,0 0 20px 6px rgba(255,215,0,.9)}}
 .conta.ouro{color:#8a6400;font-weight:bold}
+.barra.ouro{cursor:pointer}
 @media (prefers-reduced-motion:reduce){.barra.ouro,.barra.ouro i{animation:none}}
 
 .conta{font-size:16px;color:var(--suave)}
@@ -302,6 +303,22 @@ function ini3D(){
 }
 function monta(){const p=app.querySelector('.palco');if(!p)return;if(R3===null)R3=ini3D()||false;
   if(R3){R3.modo=S.modo||'';R3.t0=performance.now()/1000;R3.poe(p)}else p.innerHTML=AVE}
+let AC=null;
+function coro(C,dest,t0){
+ const out=C.createGain();out.gain.value=1.8;const comp=C.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;out.connect(comp);comp.connect(dest);
+ const len=Math.floor(C.sampleRate*3.5),ir=C.createBuffer(2,len,C.sampleRate);for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
+ const rev=C.createConvolver();rev.buffer=ir;const wet=C.createGain();wet.gain.value=.5;rev.connect(wet);wet.connect(out);
+ const dry=C.createGain();dry.gain.value=.55;dry.connect(out);const bus=C.createGain();bus.connect(dry);bus.connect(rev);
+ const voz=C.createGain();[[800,1,6],[1150,.55,8],[2900,.22,10]].forEach(([f,g,q])=>{const b=C.createBiquadFilter();b.type='bandpass';b.frequency.value=f;b.Q.value=q;const gg=C.createGain();gg.gain.value=g*3.2;voz.connect(b);b.connect(gg);gg.connect(bus)});
+ const hz=m=>440*Math.pow(2,(m-69)/12);
+ [[0,[60,64,67,72,76],3],[2.4,[60,65,69,72,77],3],[4.8,[60,64,67,72,79],4.2]].forEach(([dt,ns,du])=>{const s=t0+dt,e=s+du;
+  ns.forEach(m=>[-7,0,6].forEach(c=>{const o=C.createOscillator();o.type='sawtooth';o.frequency.value=hz(m);o.detune.value=c;
+   const l=C.createOscillator(),lg=C.createGain();l.frequency.value=4.8+Math.random()*.8;lg.gain.value=hz(m)*.006;l.connect(lg);lg.connect(o.frequency);
+   const g=C.createGain();g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(.05,s+1.1);g.gain.setValueAtTime(.05,e-1.4);g.gain.linearRampToValueAtTime(0,e);
+   o.connect(g);g.connect(voz);o.start(s);l.start(s);o.stop(e+.1);l.stop(e+.1)}))});
+ [84,88,91,96,91,96,100].forEach((m,i)=>{const s=t0+.3+i*.22,o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.value=hz(m);g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(.05,s+.01);g.gain.exponentialRampToValueAtTime(.0001,s+1.6);o.connect(g);g.connect(bus);o.start(s);o.stop(s+1.7)});
+}
+function anjos(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();coro(AC,AC.destination,AC.currentTime+.05)}catch(e){}}
 const NOMES=['','Brasileira','Jovem','Grave','Bem grave'];
 function vozes(){if(!temVoz)return '';let s='<p class="conta"><b>Escolha a voz do professor</b> (toque para ouvir):</p><div class="linha">';for(let q=1;q<=4;q++)s+='<button class="btn '+(q===vz?'amarelo':'branco')+'" data-act="vz" data-v="'+q+'">'+q+' · '+NOMES[q]+'</button>';return s+'</div>'}
 function prof(html,fala,cls){S.msg=fala;S.modo=cls||'';return '<div class="prof '+(cls||'')+'"><div class="palco"></div>'+'<button class="balao" data-act="repete">'+html+(temVoz?'<small>Toque aqui para ouvir de novo</small>':'')+'</button></div>'}
@@ -322,9 +339,10 @@ function texto(c,n){
 }
 function home(){
   const tot=F.length,ok=F.filter(c=>(lv[c.id]||0)>=5).length,prox=F.findIndex(c=>(lv[c.id]||0)<5);
+  if(ok===tot&&!lv._anjos){lv._anjos=1;salva();if(vozOn)setTimeout(anjos,200)}
   const msg=ok===0?'Vamos treinar um trecho de cada vez. Cada trecho tem 5 níveis e vale uma estrela.':ok<tot?'Você já tem '+ok+' de '+tot+' estrelas. Continue assim!':'Todas as estrelas! Agora faça o ensaio geral em pé, em voz alta.';
   let h=prof('<b>Olá, Samuel! Eu sou o professor Léo.</b>'+msg,[ok===0?'home0':ok<tot?'home1':'home2'],'oi')+vozBtn()+vozes()+
-   '<h1>Região Centro-Oeste</h1><div class="barra'+(ok===tot?' ouro':'')+'" role="progressbar" aria-valuemin="0" aria-valuemax="'+tot+'" aria-valuenow="'+ok+'"><i style="width:'+(ok/tot*100)+'%"></i></div><p class="conta'+(ok===tot?' ouro':'')+'">'+(ok===tot?'★ Todas as '+tot+' estrelas! ★':ok+' de '+tot+' trechos decorados')+'</p>'+
+   '<h1>Região Centro-Oeste</h1><div class="barra'+(ok===tot?' ouro':'')+'"'+(ok===tot?' data-act="anjos" title="Toque para ouvir os anjos"':'')+' role="progressbar" aria-valuemin="0" aria-valuemax="'+tot+'" aria-valuenow="'+ok+'"><i style="width:'+(ok/tot*100)+'%"></i></div><p class="conta'+(ok===tot?' ouro':'')+'">'+(ok===tot?'★ Todas as '+tot+' estrelas! ★ <span style="font-weight:normal">(toque na barra para ouvir os anjos)</span>':ok+' de '+tot+' trechos decorados')+'</p>'+
    '<button class="btn verde" data-act="ir" data-i="'+(prox<0?0:prox)+'">'+(ok===0?'Começar o treino':prox<0?'Treinar de novo':'Continuar o treino')+'</button>'+
    '<button class="btn amarelo" data-act="ensaio">Ensaio geral com cronômetro</button>';
   P.forEach((p,pi)=>{
@@ -333,7 +351,7 @@ function home(){
       h+='<button class="trecho'+(n>=5?' feito':'')+'" data-act="ir" data-i="'+F.indexOf(c)+'"><span class="nome">'+c.t+'</span><span class="pips" aria-label="'+n+' de 5 níveis">'+pp+'</span><span class="estrela">'+(n>=5?'★':'')+'</span></button>'});
     h+='</section>';
   });
-  h+='<p class="conta">Aplicativo · versão 27 · professor humano 3D · quatro vozes para escolher</p>';
+  h+='<p class="conta">Aplicativo · versão 28 · professor humano 3D · quatro vozes para escolher</p>';
   app.innerHTML=h;
 }
 function treino(){
@@ -378,6 +396,7 @@ app.addEventListener('click',e=>{
   else if(a==='passei'){lv[c.id]=Math.max(lv[c.id]||0,S.n);salva();if(S.n===5)S.festa=true;else{S.n++;S.ver=false;S.pre='Muito bem! '}vai('treino')}
   else if(a==='ouvir'){if(atual)calar();else diz(['x-'+c.id],true)}
   else if(a==='vel'){VEL=+b.dataset.v;lv._vel=VEL;salva();if(som){try{som.defaultPlaybackRate=VEL;som.playbackRate=VEL}catch(e){}}pintaVel()}
+  else if(a==='anjos'){anjos()}
   else if(a==='auto'){if(AUTO)calar();else{const l=['x-'+c.id];diz(l,true);AUTO=true;laco=l;pintaAuto()}}
   else if(a==='repete'){if(atual)calar();else diz(S.msg,true)}
   else if(a==='vz'){vz=+b.dataset.v;if(typeof guardaVoz==='function')guardaVoz(vz);lv._v=vz;vozOn=true;delete lv._mudo;salva();calar();desenha();diz(['home0'],true)}
